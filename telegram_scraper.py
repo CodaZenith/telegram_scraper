@@ -1,91 +1,51 @@
-# filename: telegram_scraper.py
-from telethon.sync import TelegramClient
-from telethon.errors import SessionPasswordNeededError
-import csv
-import sys
+import os
+from colorama import Fore, Back, Style, init
 
-def authenticate():
-    api_id = input("Please enter your API ID: ")
-    api_hash = input("Please enter your API Hash: ")
-    phone_number = input("Please enter your phone number (with country code): ")
+# Initialize colorama
+init(autoreset=True)
 
-    client = TelegramClient(phone_number, api_id, api_hash)
-    client.connect()
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-    if not client.is_user_authorized():
-        try:
-            client.send_code_request(phone_number)
-            client.sign_in(phone_number, input("Enter the code you received: "))
+def display_menu():
+    clear_screen()
+    print(Fore.CYAN + Style.BRIGHT + "╔═══════════════════════════════════════════╗")
+    print(Fore.CYAN + Style.BRIGHT + "║" + Fore.YELLOW + "         WELCOME TO THE MAIN MENU         " + Fore.CYAN + "║")
+    print(Fore.CYAN + Style.BRIGHT + "╚═══════════════════════════════════════════╝\n")
 
-            # Handle 2FA
-            if client.is_user_authorized() and client.get_me().is_self:
-                try:
-                    client.sign_in(password=input("Your account is secured with 2FA. Please enter your password: "))
-                except SessionPasswordNeededError:
-                    print("Incorrect password entered.")
-                    sys.exit(1)
-        except Exception as e:
-            print(f"Authentication failed: {e}")
-            sys.exit(1)
-
-    return client
-
-def show_menu():
-    print("\n1. Scrape Members")
-    print("2. About Script")
-    choice = input("Choose an option: ")
-    return choice
-
-def list_groups(client):
-    dialogs = client.get_dialogs()
-    groups = [d for d in dialogs if d.is_group]
-
-    if not groups:
-        print("No groups found.")
-        return None
-
-    for i, group in enumerate(groups, start=1):
-        print(f"{i}. {group.name}")
+    print(Fore.MAGENTA + Style.BRIGHT + " 1." + Fore.WHITE + " Termux Set-Up")
+    print(Fore.MAGENTA + Style.BRIGHT + " 2." + Fore.WHITE + " Termux Front and Theme")
+    print(Fore.MAGENTA + Style.BRIGHT + " 3." + Fore.WHITE + " Python Encryption")
+    print(Fore.MAGENTA + Style.BRIGHT + " 4." + Fore.WHITE + " Facebook Brute Force\n")
     
-    return groups
+    print(Fore.MAGENTA + Style.BRIGHT + " 5." + Fore.WHITE + " Termux Banner [V1]")
+    print(Fore.MAGENTA + Style.BRIGHT + " 6." + Fore.WHITE + " Termux Banner [V2]")
+    print(Fore.MAGENTA + Style.BRIGHT + " 7." + Fore.WHITE + " Kali Linux Nethunter")
+    print(Fore.MAGENTA + Style.BRIGHT + " 8." + Fore.WHITE + " Wifi Hacking [Rooted Device]\n")
 
-def scrape_members(client, group):
-    members = client.get_participants(group)
-    
-    with open('members.csv', 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(['user_id', 'username', 'first_name', 'last_name', 'access_hash'])
-        
-        for user in members:
-            writer.writerow([user.id, user.username, user.first_name, user.last_name, user.access_hash])
-    
-    print(f'Successfully saved {len(members)} members to members.csv')
+    print(Fore.MAGENTA + Style.BRIGHT + " 9." + Fore.WHITE + " OSINT")
+    print(Fore.MAGENTA + Style.BRIGHT + " 10." + Fore.WHITE + " Ultra DDoS")
+    print(Fore.MAGENTA + Style.BRIGHT + " 11." + Fore.WHITE + " Number Info")
+    print(Fore.MAGENTA + Style.BRIGHT + " 12." + Fore.WHITE + " Fix Termux\n")
+
+    print(Fore.MAGENTA + Style.BRIGHT + " 13." + Fore.WHITE + " U Phisher")
+    print(Fore.MAGENTA + Style.BRIGHT + " 14." + Fore.WHITE + " Brute")
+    print(Fore.MAGENTA + Style.BRIGHT + " 15." + Fore.WHITE + " Info X")
+    print(Fore.MAGENTA + Style.BRIGHT + " 0." + Fore.WHITE + " Exit Program\n")
+
+    print(Fore.CYAN + Style.BRIGHT + "═════════════════════════════════════════════")
+    print(Fore.YELLOW + Style.BRIGHT + "Select an option:" + Fore.RESET + " ", end='')
 
 def main():
-    client = authenticate()
-
     while True:
-        choice = show_menu()
-        
-        if choice == '1':
-            groups = list_groups(client)
-            if groups:
-                group_choice = int(input("\nEnter the number of the group you want to scrape: ")) - 1
-                if 0 <= group_choice < len(groups):
-                    scrape_members(client, groups[group_choice])
-                else:
-                    print("Invalid choice.")
-        elif choice == '2':
-            print("\nThis script allows you to scrape members from any Telegram group you are a part of.")
-            print("You can use the scraped data for various purposes, such as data analysis, marketing, etc.")
-        else:
-            print("Invalid choice. Please try again.")
-        
-        again = input("Do you want to perform another action? (y/n): ")
-        if again.lower() != 'y':
+        display_menu()
+        option = input()
+        if option == '0':
+            print(Fore.RED + "\nExiting program...")
             break
-
-    client.disconnect()
+        else:
+            print(Fore.GREEN + f"\nYou selected option {option}. This is where the function would be executed.")
+            input(Fore.CYAN + Style.BRIGHT + "\nPress Enter to return to the menu...")
 
 if __name__ == "__main__":
     main()
